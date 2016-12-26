@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>leaflet</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <style>
+    #panel {
+      overflow: hidden;
+      width: 1000px;
+      height: 600px;
+      position: relative;
+      background-color: #F8F8F8;
+      margin: 20px auto;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .Q-Tooltip {
+      font-size: 9pt;
+    }
+  </style>
+
+  <!-- Load Leaflet from CDN-->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet-src.js"></script>
+
+  <!-- Load Esri Leaflet from CDN -->
+  <script src="https://unpkg.com/esri-leaflet@2.0.3"></script>
+</head>
+
+<body>
+  <div id="panel">
+    <div id="map"></div>
+  </div>
+
+  <script>
+    var cities = new L.LayerGroup();
+
+    var mbAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        mbUrl = 'http://map.zhtu.net:8080/r3t-basemap/{z}/{x}/{y}/tile.jpg';//1、底图设置
+
+    var grayscale = L.tileLayer(mbUrl, {id: 'mapbox.light', attribution: mbAttr}),
+        streets = L.tileLayer(mbUrl, {id: 'mapbox.streets', attribution: mbAttr});
+
+    var map = L.map('map', {
+      center: [39.90734, 116.39127],//2、地图中心设置 天安门坐标
+      zoom: 10,
+      layers: [grayscale, cities]
+    });
+
+    var baseLayers = {
+      "Streets": streets,
+      "Grayscale": grayscale
+    };
+
+    var overlays = {
+      "Cities": cities
+    };
+
+    L.control.layers(baseLayers, overlays).addTo(map);
+
+    L.esri.basemapLayer("Topographic").addTo(map);
+
+    L.control.scale({position: 'topright'}).addTo(map); //4、右上角比例尺
+
+    function addPoint(e) {
+
+      var strOfMarker = e.latlng.toString();
+      var marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map)
+          .bindPopup(strOfMarker)
+          .openPopup();
+    }
+    map.on('dblclick', addPoint); //5、点击地图生成marker，显示当前经纬度
+  </script>
+</body>
+</html>
