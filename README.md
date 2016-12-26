@@ -3,7 +3,7 @@ a simple page to be acquainted with leaflet.
 
 This simple project have the following functions：
 
-－ set up base map
+- set up base map
 
 - set up the center of map
 
